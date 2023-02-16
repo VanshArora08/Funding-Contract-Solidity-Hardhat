@@ -32,8 +32,27 @@ describe("FundMe", function () {
         })
         it("update address to amount properly", async () => {
             await fundMe.fund({ value: sendValue })
-            const response = await fundMe.s_addressToAmountFunded(deployer);
+            const response = await fundMe.getAddressToAmountFunded(deployer);
             assert.equal(response.toString(), sendValue.toString());
+        })
+    })
+    describe("withdraw", function () {
+        beforeEach(async function () {
+            await fundMe.fund({ value: sendValue })
+        })
+        it("should sent all balance in contract to deployer when withdraw is called", async () => {
+            const stFundmeBal = await fundMe.provider.getBalance(fundMe.address)
+            const stDeployerBal = await fundMe.provider.getBalance(deployer)
+            const txresponse = await fundMe.withdraw();
+            const txreciept = await txresponse.wait(1);
+            const { gasUsed, effectiveGasPrice } = txreciept;
+            const totalGasPrice = gasUsed.mul(effectiveGasPrice);
+
+            const enDeployerBal = await fundMe.provider.getBalance(deployer)
+            const enFundmeBal = await fundMe.provider.getBalance(fundMe.address)
+
+            assert.equal(enFundmeBal.toString(), "0");
+            assert.equal((stDeployerBal.add(stFundmeBal)).toString(), enDeployerBal.add(totalGasPrice).toString());
         })
     })
 })
