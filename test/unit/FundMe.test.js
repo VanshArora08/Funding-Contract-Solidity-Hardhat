@@ -6,6 +6,7 @@ describe("FundMe", function () {
     let fundMe
     let mockV3Aggregator
     let deployer
+    let sendValue = ethers.utils.parseEther("1");
     //   const sendValue = ethers.utils.parseEther("1")
     beforeEach(async () => {
         // const accounts = await ethers.getSigners()
@@ -23,6 +24,16 @@ describe("FundMe", function () {
         it("sets the aggregator addresses correctly", async () => {
             const response = await fundMe.getPriceFeed();
             assert.equal(response, mockV3Aggregator.address)
+        })
+    })
+    describe("fund", function () {
+        it("revert error if enough eth is not sent", async () => {
+            await expect(fundMe.fund()).to.be.revertedWith("You need to spend more ETH!");
+        })
+        it("update address to amount properly", async () => {
+            await fundMe.fund({ value: sendValue })
+            const response = await fundMe.s_addressToAmountFunded(deployer);
+            assert.equal(response.toString(), sendValue.toString());
         })
     })
 })
