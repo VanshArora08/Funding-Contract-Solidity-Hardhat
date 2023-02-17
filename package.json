@@ -1,5 +1,6 @@
 {
-  "name": "hardhat-fund-me-fcc",
+  "name": "funding-hardhat",
+  "author": "Vansh Arora",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@nomiclabs/hardhat-etherscan": "^3.0.0",
